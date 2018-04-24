@@ -93,7 +93,7 @@ Property Get ColumnRowLastCell() As Range
 End Property
 
 Property Get ColumnRowColumnCell(ByVal Index As Variant) As Range
-    Set ColumnRowColumnCell = list.ListColumns(Index).Range
+    Set ColumnRowColumnCell = list.ListColumns(Index).Range.Cells(1, 1)
 End Property
 
 
