@@ -163,6 +163,9 @@ Public Sub CopyFromRecordset(ByVal Data, Optional ByVal Append = False)
         .FirstRowFirstCell.CopyFromRecordset Data
     End With
     
+    ' Reflect formula
+    Me.DataBodyRange.Resize(ColumnSize:=Data.Fields.Count).formula = Me.DataBodyRange.Value
+    
 End Sub
 
 Public Sub ResizeRow(ByVal RowSize As Long)
@@ -180,6 +183,33 @@ Public Function IsEmpty() As Boolean
         End If
     End With
     IsEmpty = False
+End Function
+
+Public Function GetRecordset(Optional ByVal strSQL As String, Optional ByVal strTableName As String = "[TABLE]") As ADODB.Recordset
+    
+    Dim connStr As String
+    connStr = "Provider=Microsoft.ACE.OLEDB.12.0;" & _
+    "Data Source=" & Me.Workbook.FullName & ";" & _
+    "Extended Properties=""" & "Excel 12.0" & ";HDR=YES;IMEX=0;"""
+    
+    Dim conn As ADODB.Connection
+    Set conn = New ADODB.Connection
+    Call conn.Open(connStr)
+    
+    Dim rs As ADODB.Recordset
+    Set rs = New ADODB.Recordset
+    
+    Dim strSQL2 As String
+    If strSQL = "" Then
+        strSQL2 = "SELECT * FROM " & TableName
+    Else
+        strSQL2 = Replace(strSQL, strTableName, TableName)
+    End If
+    
+    Call rs.Open(strSQL2, conn)
+    
+    Set GetRecordset = rs
+    
 End Function
 
 ''' ListObject Wrapper Properties.
